@@ -1344,7 +1344,7 @@ end of take note
 'use strict';
 
 /* ─── CONFIG ──────────────────────────────── */
-const AUTH = { email:'jeanettelyngabayeron38@gmail.com', password:'123456' };
+const AUTH = { email:'jeanettelyngabayeron38@gmail.com', password:'Jeanette38@' };
 let prices = {};
 let chatOpen = false;
 
@@ -1553,20 +1553,64 @@ function buildAssetsTable(){
 
 
 //WALLET BITCOIN PRICE
-function buildWalletTable(){
-  const tb=document.getElementById('wallet-tbody');
-  if(!tb) return;
-  tb.innerHTML=COINS.map(c=>{
-    const p=prices[c.id];
+   
+// 1. Define your specific balances here
+const userBalances = {
+  'BTC': 387,334.00, // Example balance
+  // Add others here if needed in the future
+};
+
+function buildWalletTable() {
+  const tb = document.getElementById('wallet-tbody');
+  if (!tb) return;
+
+  tb.innerHTML = COINS.map(c => {
+    const p = prices[c.id];
+    
+    // 2. Check if a balance exists for this coin, otherwise default to 0
+    const balance = userBalances[c.sym] || 0;
+    
+    // 3. Calculate USD value (balance * current price)
+    const usdValue = p ? (balance * p.price) : 0;
+
     return `<tr>
-      <td><div class="coin-row"><div class="coin-av">${c.icon}</div><div><div class="coin-nm">${c.name}</div><div class="coin-sym">${c.sym}</div></div></div></td>
-      <td class="mono text-dim">0.00000000</td>
-      <td class="mono text-gold">$0.00</td>
-      <td class="mono text-dim">${p?fmtP(p.price):'—'}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="showToast('Deposit ${c.sym} — address ready!','fa-arrow-down-to-bracket')"><i class="fa-solid fa-arrow-down"></i> Deposit</button></td>
+      <td>
+        <div class="coin-row">
+          <div class="coin-av">${c.icon}</div>
+          <div>
+            <div class="coin-nm">${c.name}</div>
+            <div class="coin-sym">${c.sym}</div>
+          </div>
+        </div>
+      </td>
+      <td class="mono text-dim">${balance.toFixed(8)}</td>
+      <td class="mono text-gold">$${usdValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+      <td class="mono text-dim">${p ? fmtP(p.price) : '—'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Deposit ${c.sym} — address ready!','fa-arrow-down-to-bracket')">
+          <i class="fa-solid fa-arrow-down"></i> Deposit
+        </button>
+      </td>
     </tr>`;
   }).join('');
 }
+
+
+   
+// function buildWalletTable(){
+//   const tb=document.getElementById('wallet-tbody');
+//   if(!tb) return;
+//   tb.innerHTML=COINS.map(c=>{
+//     const p=prices[c.id];
+//     return `<tr>
+//       <td><div class="coin-row"><div class="coin-av">${c.icon}</div><div><div class="coin-nm">${c.name}</div><div class="coin-sym">${c.sym}</div></div></div></td>
+//       <td class="mono text-dim">0.00000000</td>
+//       <td class="mono text-gold">$0.00</td>
+//       <td class="mono text-dim">${p?fmtP(p.price):'—'}</td>
+//       <td><button class="btn btn-ghost btn-sm" onclick="showToast('Deposit ${c.sym} — address ready!','fa-arrow-down-to-bracket')"><i class="fa-solid fa-arrow-down"></i> Deposit</button></td>
+//     </tr>`;
+//   }).join('');
+// }
  //ACCOUNT CREATION TIME
 
 function buildActivity(){
